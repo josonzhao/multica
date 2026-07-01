@@ -5,6 +5,8 @@ import {
   AlertCircle,
   AlertTriangle,
   ArrowLeft,
+  BarChart3,
+  FileText,
   HardDrive,
   Loader2,
   Lock,
@@ -70,7 +72,10 @@ import {
   AddToAgentDialog,
   type SkillActionsContext,
 } from "./skill-list-actions";
+import { EffectivenessTab } from "./effectiveness-tab";
 import { useT } from "../../i18n";
+
+type DetailTab = "instructions" | "effectiveness";
 
 const SKILL_MD = "SKILL.md";
 
@@ -304,6 +309,7 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
   const [showAddToAgents, setShowAddToAgents] = useState(false);
   const [addingFile, setAddingFile] = useState(false);
   const [conflictPending, setConflictPending] = useState(false);
+  const [activeTab, setActiveTab] = useState<DetailTab>("instructions");
 
   const draftRef = useRef({ name, description, content, files });
   draftRef.current = { name, description, content, files };
@@ -631,7 +637,43 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
         </div>
       )}
 
+      {/* Tab bar */}
+      <div className="flex shrink-0 items-center gap-0 border-b px-2 md:px-4">
+        <button
+          type="button"
+          onClick={() => setActiveTab("instructions")}
+          className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-2.5 text-xs font-medium transition-colors ${
+            activeTab === "instructions"
+              ? "border-foreground text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <FileText className="h-3.5 w-3.5" />
+          {t(($) => $.detail.tab_instructions)}
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("effectiveness")}
+          className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-2.5 text-xs font-medium transition-colors ${
+            activeTab === "effectiveness"
+              ? "border-foreground text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <BarChart3 className="h-3.5 w-3.5" />
+          {t(($) => $.detail.tab_effectiveness)}
+        </button>
+      </div>
+
+      {/* Effectiveness tab — full width, no file tree / sidebar */}
+      {activeTab === "effectiveness" && (
+        <div className="flex-1 min-h-0 overflow-y-auto">
+          <EffectivenessTab skillId={skillId} />
+        </div>
+      )}
+
       {/* Body: file tree | editor | sidebar */}
+      {activeTab === "instructions" && (
       <div className="flex flex-1 min-h-0 flex-col overflow-y-auto md:flex-row md:overflow-hidden">
         {/* File tree */}
         <aside className="flex max-h-44 w-full shrink-0 flex-col border-b md:max-h-none md:w-56 md:border-b-0 md:border-r">
@@ -919,6 +961,7 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
           </div>
         </aside>
       </div>
+      )}
 
       {/* Delete confirmation */}
       <Dialog

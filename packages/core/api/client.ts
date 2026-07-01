@@ -44,6 +44,7 @@ import type {
   SkillSummary,
   CreateSkillRequest,
   UpdateSkillRequest,
+  SkillEffectiveness,
   SetAgentSkillsRequest,
   PersonalAccessToken,
   CreatePersonalAccessTokenRequest,
@@ -1654,6 +1655,10 @@ export class ApiClient {
 
   async deleteSkill(id: string): Promise<void> {
     await this.fetch(`/api/skills/${id}`, { method: "DELETE" });
+  }
+
+  async getSkillEffectiveness(id: string): Promise<SkillEffectiveness> {
+    return this.fetch(`/api/skills/${id}/effectiveness`);
   }
 
   async importSkill(data: { url: string }): Promise<Skill> {

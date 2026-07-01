@@ -520,6 +520,27 @@ export interface UpdateSkillRequest {
   files?: { path: string; content: string }[];
 }
 
+/**
+ * Per-skill usage statistics returned by `GET /api/skills/:id/effectiveness`.
+ * All numeric fields are non-negative; `per_agent` may be empty. The endpoint
+ * returns `null`-ish shape (all zeros, empty arrays) when the skill has never
+ * been invoked — the component treats that as the "no data" case.
+ */
+export interface SkillEffectiveness {
+  usage_count: number;
+  success_count: number;
+  failure_count: number;
+  total_tokens: number;
+  avg_duration_ms: number;
+  last_used_at: string | null;
+  per_agent: {
+    agent_id: string;
+    agent_name: string;
+    usage_count: number;
+    success_count: number;
+  }[];
+}
+
 export interface SetAgentSkillsRequest {
   skill_ids: string[];
 }
